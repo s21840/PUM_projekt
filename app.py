@@ -31,7 +31,7 @@ def main():
 
 	with left:
 		repeat_retailer_radio = st.radio("Czy transakcja u powtarzającego się dostawcy: ", list(repeat_retailer_d.keys()), format_func=lambda x : repeat_retailer_d[x] )
-		used_chip_radio = st.radio("Czy użyto czipu: ", list(used_chip_d.keys()), index=2, format_func= lambda x: used_chip_d[x] )
+		used_chip_radio = st.radio("Czy użyto czipu: ", list(used_chip_d.keys()), format_func= lambda x: used_chip_d[x] )
 		used_pin_radio = st.radio("Czy podano pin: ", list(used_pin_d.keys()), format_func=lambda x : used_pin_d[x])
 		online_order_radio = st.radio("Czy płatność online: ", list(online_order_d.keys()), format_func=lambda x : online_order_d[x])
 
