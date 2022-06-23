@@ -10,8 +10,8 @@ import pandas as pd
 
 
 filename = "forest_model.sv"
-model_tree = pickle.load(open(filename,'rb'))
-model_forest = pickle.load(open(filename,'rb'))
+#tree_model = pickle.load(open(filename,'rb'))
+forest_model = pickle.load(open(filename,'rb'))
 base_data = pd.read_csv("card_transactions_400k.csv")
 
 repeat_retailer_d = {0:"Nie",1:"Tak"}
