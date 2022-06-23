@@ -10,7 +10,7 @@ import pandas as pd
 
 
 filename = "forest_model.sv"
-#tree_model = pickle.load(open(filename,'rb'))
+tree_model = pickle.load(open(filename,'rb'))
 forest_model = pickle.load(open(filename,'rb'))
 base_data = pd.read_csv("card_transactions_400k.csv")
 
@@ -41,8 +41,8 @@ def main():
 		median_purchase_ratio_slider = st.slider("Ratio: ", min_value=int(base_data["ratio_to_median_purchase_price"].min()), max_value=int(base_data["ratio_to_median_purchase_price"].max()))
 
 	data = [[repeat_retailer_radio, used_chip_radio,  used_pin_radio, online_order_radio, distance_home_slider, ditance_last_transaction_slider, median_purchase_ratio_slider]]
-	survival = forest_model.predict(data)
-	s_confidence = forest_model.predict_proba(data)
+	survival = tree_model.predict(data)
+	s_confidence = tree_model.predict_proba(data)
 
 	with prediction:
 		st.subheader("Czy podejrzewamy falszywą transakcję?")
