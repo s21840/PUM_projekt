@@ -48,7 +48,7 @@ def main():
 
 	data = [[repeat_retailer_radio, used_chip_radio,  used_pin_radio, online_order_radio, distance_home_slider, ditance_last_transaction_slider, median_purchase_ratio_slider]]
 	fraudulent = forest_model.predict(data)
-	s_confidence = tree_model.predict_proba(data)
+	s_confidence = forest_model.predict_proba(data)
 
 	with prediction:
 		st.subheader("Czy podejrzewamy falszywą transakcję?")
