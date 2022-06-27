@@ -9,10 +9,16 @@ from datetime import datetime
 import pandas as pd
 
 
-filename = "forest_model.sv"
+filename = "tree_model.sv"
 tree_model = pickle.load(open(filename,'rb'))
-forest_model = pickle.load(open(filename,'rb'))
 base_data = pd.read_csv("card_transactions_400k.csv")
+cols = ["fraud", "distance_from_home", "distance_from_last_transaction", "ratio_to_median_purchase_price", "repeat_retailer", "used_chip", "used_pin_number", "online_order"]
+data = base_data[cols].copy()
+
+dataFraud = data[data['fraud']  == 1] 
+dataNonFraud = data[data['fraud']  == 0].head(len(dataFraud))
+
+dataframe = pd.concat([dataFraud, dataNonFraud], axis=0)
 
 repeat_retailer_d = {0:"Nie",1:"Tak"}
 used_chip_d = {0:"Nie",1:"Tak"}
@@ -36,9 +42,8 @@ def main():
 		online_order_radio = st.radio("Czy płatność online: ", list(online_order_d.keys()), format_func=lambda x : online_order_d[x])
 
 	with right:
-		distance_home_slider = st.slider("Odległość od miejsca zamieszkania: ", value=1, min_value=int(base_data["distance_from_home"].min()), max_value=int(base_data["distance_from_home"].max()))
-		ditance_last_transaction_slider = st.slider("Odległość od ostatniej transakcji: ", min_value=int(base_data["distance_from_last_transaction"].min()), max_value=int(base_data["distance_from_last_transaction"].max()))
-		median_purchase_ratio_slider = st.slider("Ratio: ", min_value=int(base_data["ratio_to_median_purchase_price"].min()), max_value=int(base_data["ratio_to_median_purchase_price"].max()))
+		ditance_last_transaction_slider = st.slider("Odległość od ostatniej transakcji: ", min_value=int(dataframe["distance_from_last_transaction"].min()), max_value=int(dataframe["distance_from_last_transaction"].max()))
+		median_purchase_ratio_slider = st.slider("Ratio: ", min_value=int(dataframe["ratio_to_median_purchase_price"].min()), max_value=int(dataframe["ratio_to_median_purchase_price"].max()))
 
 	data = [[repeat_retailer_radio, used_chip_radio,  used_pin_radio, online_order_radio, distance_home_slider, ditance_last_transaction_slider, median_purchase_ratio_slider]]
 	survival = tree_model.predict(data)
