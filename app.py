@@ -6,8 +6,8 @@ from datetime import datetime
 import pandas as pd
 
 
-filename = "forest_model.sv"
-forest_model = pickle.load(open(filename,'rb'))
+filename = "tree_model.sv"
+tree_model = pickle.load(open(filename,'rb'))
 base_data = pd.read_csv("card_transactions_400k.csv")
 cols = ["fraud", "distance_from_home", "distance_from_last_transaction", "ratio_to_median_purchase_price", "repeat_retailer", "used_chip", "used_pin_number", "online_order"]
 data = base_data[cols].copy()
@@ -44,8 +44,8 @@ def main():
 		median_purchase_ratio_slider = st.slider("Ratio: ", min_value=int(dataframe["ratio_to_median_purchase_price"].min()), max_value=int(dataframe["ratio_to_median_purchase_price"].max()))
 
 	data = [[repeat_retailer_radio, used_chip_radio,  used_pin_radio, online_order_radio, distance_home_slider, ditance_last_transaction_slider, median_purchase_ratio_slider]]
-	fraudulent = forest_model.predict(data)
-	s_confidence = forest_model.predict_proba(data)
+	fraudulent = tree_model.predict(data)
+	s_confidence = tree_model.predict_proba(data)
 
 	with prediction:
 		st.subheader("Czy podejrzewamy falszywą transakcję?")
