@@ -1,4 +1,3 @@
-
 # źródło danych [https://www.kaggle.com/datasets/dhanushnarayananr/credit-card-fraud/](https://www.kaggle.com/datasets/dhanushnarayananr/credit-card-fraud)
 
 import streamlit as st
@@ -6,22 +5,22 @@ import pickle
 from datetime import datetime
 import pandas as pd
 
+
 filename = "forest_model.sv"
-tree_model = pickle.load(open(filename,'rb'))
+forest_model = pickle.load(open(filename,'rb'))
 base_data = pd.read_csv("card_transactions_400k.csv")
-cols = ["fraud", "distance_from_home", "ratio_to_median_purchase_price", "used_chip", "used_pin_number", "online_order"]
+cols = ["fraud", "distance_from_home", "distance_from_last_transaction", "ratio_to_median_purchase_price", "repeat_retailer", "used_chip", "used_pin_number", "online_order"]
 data = base_data[cols].copy()
 
-dataFraud = data[data['fraud']  == 1].head(3000)
-dataNonFraud = data[data['fraud']  == 0].head(3000)
+dataFraud = data[data['fraud']  == 1].head(5000)
+dataNonFraud = data[data['fraud']  == 0].head(5000)
 
 dataframe = pd.concat([dataFraud, dataNonFraud], axis=0)
 
+repeat_retailer_d = {0:"Nie",1:"Tak"}
 used_chip_d = {0:"Nie",1:"Tak"}
 used_pin_d = {0:"Nie",1:"Tak"}
 online_order_d = {0:"Nie",1:"Tak"}
-
-
 
 def main():
 
@@ -34,17 +33,19 @@ def main():
 		st.title("Fraud detection")
 
 	with left:
+		repeat_retailer_radio = st.radio("Czy transakcja u powtarzającego się dostawcy: ", list(repeat_retailer_d.keys()), format_func=lambda x : repeat_retailer_d[x] )
 		used_chip_radio = st.radio("Czy użyto czipu: ", list(used_chip_d.keys()), format_func= lambda x: used_chip_d[x] )
 		used_pin_radio = st.radio("Czy podano pin: ", list(used_pin_d.keys()), format_func=lambda x : used_pin_d[x])
 		online_order_radio = st.radio("Czy płatność online: ", list(online_order_d.keys()), format_func=lambda x : online_order_d[x])
 
 	with right:
 		distance_home_slider = st.slider("Odległość od miejsca zamieszkania: ", min_value=int(dataframe["distance_from_home"].min()), max_value=int(dataframe["distance_from_home"].max()))
+		ditance_last_transaction_slider = st.slider("Odległość od ostatniej transakcji: ", min_value=int(dataframe["distance_from_last_transaction"].min()), max_value=int(dataframe["distance_from_last_transaction"].max()))
 		median_purchase_ratio_slider = st.slider("Ratio: ", min_value=int(dataframe["ratio_to_median_purchase_price"].min()), max_value=int(dataframe["ratio_to_median_purchase_price"].max()))
 
-	data = [[used_chip_radio,  used_pin_radio, online_order_radio, distance_home_slider, median_purchase_ratio_slider]]
-	fraudulent = tree_model.predict(data)
-	s_confidence = tree_model.predict_proba(data)
+	data = [[repeat_retailer_radio, used_chip_radio,  used_pin_radio, online_order_radio, distance_home_slider, ditance_last_transaction_slider, median_purchase_ratio_slider]]
+	fraudulent = forest_model.predict(data)
+	s_confidence = forest_model.predict_proba(data)
 
 	with prediction:
 		st.subheader("Czy podejrzewamy falszywą transakcję?")
